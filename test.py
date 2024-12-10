@@ -1,13 +1,13 @@
 import pandas as pd
 import os
+import numpy as np
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.linear_model import LinearRegression, ElasticNetCV
+from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
+from sklearn.linear_model import LinearRegression, ElasticNetCV, LassoCV
 from sklearn.metrics import mean_squared_error, r2_score
 import xgboost as xgb
-import numpy as np
 
 # ---------------------------
 # Load and Clean Demographic Data
@@ -100,27 +100,34 @@ X_scaled = scaler.fit_transform(X_final)
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.25, random_state=42)
 
 # ---------------------------
+# Feature Selection Using Lasso
+# ---------------------------
+lasso = LassoCV(cv=5, max_iter=10000)
+lasso.fit(X_train, y_train)
+
+# Get the non-zero coefficient features
+important_features = lasso.coef_ != 0
+print(f"Number of important features selected by Lasso: {np.sum(important_features)}")
+
+# Reduce X to only important features
+X_train_selected = X_train[:, important_features]
+X_test_selected = X_test[:, important_features]
+
+# ---------------------------
 # Model Training and Evaluation
 # ---------------------------
 
 # Linear Regression
 lr = LinearRegression()
-lr.fit(X_train, y_train)
-y_pred_lr = lr.predict(X_test)
+lr.fit(X_train_selected, y_train)
+y_pred_lr = lr.predict(X_test_selected)
 print("\nLinear Regression MSE:", mean_squared_error(y_test, y_pred_lr), "R^2:", r2_score(y_test, y_pred_lr))
-
-# Elastic Net with Expanded Hyperparameter Grid
-# en = ElasticNetCV(l1_ratio=[0.1, 0.5, 0.9], alphas=[0.0001, 0.001, 0.01, 0.1, 1, 10], cv=5, max_iter=10000)
-# en.fit(X_train, y_train)
-# y_pred_en = en.predict(X_test)
-# print("Elastic Net MSE:", mean_squared_error(y_test, y_pred_en), "R^2:", r2_score(y_test, y_pred_en))
 
 # Elastic Net with Increased Iterations
 en = ElasticNetCV(l1_ratio=[0.1, 0.5, 0.9], alphas=[0.0001, 0.001, 0.01, 0.1, 1, 10], cv=5, max_iter=10000)
-en.fit(X_train, y_train)
-y_pred_en = en.predict(X_test)
+en.fit(X_train_selected, y_train)
+y_pred_en = en.predict(X_test_selected)
 print("Elastic Net MSE:", mean_squared_error(y_test, y_pred_en), "R^2:", r2_score(y_test, y_pred_en))
-
 
 # XGBoost with Grid Search
 param_grid = {
@@ -130,9 +137,9 @@ param_grid = {
     'subsample': [0.8, 1.0]
 }
 gs = GridSearchCV(xgb.XGBRegressor(random_state=42), param_grid, cv=5, scoring='r2')
-gs.fit(X_train, y_train)
+gs.fit(X_train_selected, y_train)
 
 best_xg = gs.best_estimator_
-y_pred_xg = best_xg.predict(X_test)
+y_pred_xg = best_xg.predict(X_test_selected)
 print("XGBoost Best Params:", gs.best_params_)
 print("XGBoost MSE:", mean_squared_error(y_test, y_pred_xg), "R^2:", r2_score(y_test, y_pred_xg))

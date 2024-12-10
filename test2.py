@@ -39,11 +39,9 @@ for snp in significant_snps:
         test_df[f'{snp}_{pc}_interaction'] = test_df[snp] * test_df[pc]
 
 # Create dummy variables for categorical features
-test_df['mother_chinesevmalay'] = np.where(test_df['mother_ethnicity_cat'].isin([1, 3]), 0,
-                                           (test_df['mother_ethnicity_cat'] == 2).astype(int))
+test_df['mother_chinesevmalay'] = np.where(test_df['mother_ethnicity_cat'].isin([1, 3]), 0, (test_df['mother_ethnicity_cat'] == 2).astype(int))
 
-test_df['mother_chinesevindian'] = np.where(test_df['mother_ethnicity_cat'].isin([1, 2]), 0,
-                                            (test_df['mother_ethnicity_cat'] == 3).astype(int))
+test_df['mother_chinesevindian'] = np.where(test_df['mother_ethnicity_cat'].isin([1, 2]), 0, (test_df['mother_ethnicity_cat'] == 3).astype(int))
 
 # ---------------------------
 # Define Target and Features
