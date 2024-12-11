@@ -1,3 +1,20 @@
+"""
+run_model_pipeline.py
+
+This script runs a machine learning pipeline for predicting methylation levels
+based on genetic and non-genetic features. It supports Linear Regression,
+Elastic Net, and XGBoost models.
+
+Arguments:
+    --probe: Name of the probe to analyze (e.g., 'Probe1').
+    --feature_set: Feature set to use (e.g., 'GWAS_beforeBH_combined').
+    --scenario: Scenario to run ('genetic_only' or 'genetic_pcs_nongenetic').
+    --output: Path to the output CSV file for storing results.
+
+Example:
+    python run_model_pipeline.py --probe Probe1 --feature_set GWAS_beforeBH_combined --scenario genetic_only
+"""
+
 import pandas as pd
 import numpy as np
 import os

@@ -13,13 +13,13 @@ Our replication involves:
 
 ## Project Overview
 
-1. **test4.py**: Runs a single scenario (given a probe, feature set, and scenario) and appends results to a results_all.csv file. It trains Linear Regression, Elastic Net, and XGBoost, then prints and saves performance metrics (R² and MSE for train/test sets).
+1. **run_model_pipeline.py**: Runs a single scenario (given a probe, feature set, and scenario) and appends results to a results_all.csv file. It trains Linear Regression, Elastic Net, and XGBoost, then prints and saves performance metrics (R² and MSE for train/test sets).
 
-2. **run_all.sh**: A bash script that iterates over multiple probes, feature sets, and scenarios, calling test4.py for each combination. It produces results_all.csv containing all aggregated results.
+2. **execute_all_runs.sh**: A bash script that iterates over multiple probes, feature sets, and scenarios, calling run_model_pipeline.py for each combination. It produces results_all.csv containing all aggregated results.
 
-3. **create_tables.py**: Given results_all.csv and arguments specifying a particular feature set, scenario, and model, it aggregates the results for the selected model and produces a table similar to those in the original paper. The table is printed to the console and also saved as a .png image.
+3. **generate_all_results_tables.sh**: Given results_all.csv and arguments specifying a particular feature set, scenario, and model, it aggregates the results for the selected model and produces a table similar to those in the original paper. The table is printed to the console and also saved as a .png image.
 
-4. **generate_all_tables.sh**: Runs create_tables.py for all combinations of feature sets, scenarios, and models, generating a series of tables in the tables directory.
+4. **generate_all_tables.sh**: Runs generate_all_results_tables.sh for all combinations of feature sets, scenarios, and models, generating a series of tables in the tables directory.
 
 ## Setting Up the Environment
 
@@ -65,36 +65,36 @@ data/
 1. **Generate Results**: After setting up your environment and placing all data in the data/ directory:
 
 ```bash
-./run_all.sh
+./execute_all_runs.sh
 ```
-This will run test4.py over all combinations of probes, feature sets, and scenarios, producing results_all.csv.
+This will run run_model_pipeline.py over all combinations of probes, feature sets, and scenarios, producing results_all.csv.
 
 2. **Generate Tables**: Once you have results_all.csv, you can create tables:
 ```bash
 ./generate_all_tables.sh
 ```
-This script will call create_tables.py for each combination and store the resulting .png tables in ./tables.
+This script will call generate_all_results_tables.sh for each combination and store the resulting .png tables in ./tables.
 
 ## Running the Scripts
 
-* **test4.py**:
+* **run_model_pipeline.py**:
 
 ```python 
-python test4.py --probe Probe1 --feature_set GWAS_beforeBH_combined --scenario genetic_only
+python run_model_pipeline.py --probe Probe1 --feature_set GWAS_beforeBH_combined --scenario genetic_only
 ``` 
 This will run the scenario for Probe1 with GWAS_beforeBH_combined features in the genetic_only scenario. It appends results to results_all.csv.
 
-* **run_all.sh**:
+* **execute_all_runs.sh**:
 
 ```bash
-./run_all.sh
+./execute_all_runs.sh
 ```
-Runs test4.py over all predefined combinations of probes, feature sets, and scenarios, generating results_all.csv.
+Runs run_model_pipeline.py over all predefined combinations of probes, feature sets, and scenarios, generating results_all.csv.
 
-* **create_tables.py**:
+* **generate_all_results_tables.sh**:
 
 ```python
-python create_tables.py --feature_set GWAS_beforeBH_combined --scenario genetic_only --model LinearRegression
+python generate_all_results_tables.sh --feature_set GWAS_beforeBH_combined --scenario genetic_only --model LinearRegression
 ```
 This reads from results_all.csv and generates a table (both console and PNG file) summarizing performance for the specified parameters.
 
@@ -107,6 +107,6 @@ Iterates over all feature sets, scenarios, and models, producing multiple tables
 
 ## Further Adjustments
 
-* To add or remove probes, edit the arrays in run_all.sh.
-* To change models or parameters, modify test4.py or create_tables.py.
-* If you need more complex hyperparameter tuning, adjust the parameter grids in test4.py for Elastic Net or XGBoost.
+* To add or remove probes, edit the arrays in execute_all_runs.sh.
+* To change models or parameters, modify run_model_pipeline.py or generate_all_results_tables.sh.
+* If you need more complex hyperparameter tuning, adjust the parameter grids in run_model_pipeline.py for Elastic Net or XGBoost.
