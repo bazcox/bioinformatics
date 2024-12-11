@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-# generate_all_tables.sh
-# This script will replicate combinations similarly, but since our table script
-# aggregates over probes, we only need to vary Feature_Set and Scenario.
-
 FEATURE_SETS=("GWAS_beforeBH_combined" "GWAS_afterBH_combined" "GTEx")
 SCENARIOS=("genetic_only" "genetic_pcs_nongenetic")
 MODELS=("LinearRegression" "ElasticNet" "XGBoost")

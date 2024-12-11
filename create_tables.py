@@ -25,8 +25,6 @@ probes = subset['Probe'].unique()
 probes_list = sorted(probes)
 final_columns = probes_list + ["Mean (SD)"]
 
-# Depending on model, pick metrics:
-# We'll stick to RMSE (train/test) and R² (train/test), similar to before
 # Construct column names based on chosen model
 r2_train_col = f"{model}_R2_train"
 mse_train_col = f"{model}_MSE_train"
